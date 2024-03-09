@@ -1,49 +1,86 @@
-import { fileURLToPath, URL } from "node:url";
-import { defineConfig, loadEnv } from "vite";
+import {
+  defineConfig,
+  type PluginOption,
+  splitVendorChunkPlugin,
+  loadEnv,
+} from "vite";
 import vue from "@vitejs/plugin-vue";
-
-import htmlConfig from "vite-plugin-html-config";
 import { viteExternalsPlugin } from "vite-plugin-externals";
+import { insertHtml, h } from "vite-plugin-insert-html";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+import compress from "vite-plugin-compression";
+import { envDir, sourceDir, manualChunks } from "./scripts/build";
 
-// https://vitejs.dev/config/
-export default ({ mode: VITE_MODE }: { mode: string }) => {
-  const env = loadEnv(VITE_MODE, process.cwd());
-  console.log("VITE_MODE: ", VITE_MODE);
-  console.log("ENV: ", env);
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, envDir);
+  const isProd = mode === "production";
 
-  const plugins = [vue()];
+  const cesiumBaseUrl = env["VITE_CESIUM_BASE_URL"];
+  // 默认 base 是 '/'
+  const base = "/";
 
-  const externalConfig = viteExternalsPlugin({
-    cesium: "Cesium",
-  });
-  const htmlConfigs = htmlConfig({
-    headScripts: [
-      {
-        src: "./lib/cesium/Cesium.js",
-      },
-    ],
-    links: [
-      {
-        // ******* Always use external CesiumJS's style util official package output. *******
-        // ******* 直到官方 CesiumJS 包导出样式文件前，都使用外部样式 *******
-        rel: "stylesheet",
-        href: "./lib/cesium/Widgets/widgets.css",
-      },
-    ],
-  });
-  plugins.push(externalConfig, htmlConfigs);
+  const plugins: PluginOption[] = [
+    vue(),
+    splitVendorChunkPlugin(),
+    viteExternalsPlugin({
+      cesium: "Cesium", // 外部化 cesium 依赖，之后全局访问形式是 window['Cesium']
+    }),
+    insertHtml({
+      head: [
+        // 生产模式使用 CDN 或已部署的 CesiumJS 在线库链接，开发模式用拷贝的库文件，根据 VITE_CESIUM_BASE_URL 自动拼接
+        h("script", {
+          // 因为涉及前端路径访问，所以开发模式最好显式拼接 base 路径，适配不同 base 路径的情况
+          src: isProd
+            ? `${cesiumBaseUrl}Cesium.js`
+            : `${base}${cesiumBaseUrl}Cesium.js`,
+        }),
+      ],
+    }),
+  ];
+  if (!isProd) {
+    // 开发模式，复制 node_modules 下的 cesium 依赖
+    const cesiumLibraryRoot = "node_modules/cesium/Build/CesiumUnminified/";
+    const cesiumLibraryCopyToRootPath = "libs/cesium/"; // 相对于打包后的路径
+    const cesiumStaticSourceCopyOptions = [
+      "Assets",
+      "ThirdParty",
+      "Workers",
+      "Widgets",
+    ].map((dirName) => {
+      return {
+        src: `${cesiumLibraryRoot}${dirName}/*`, // 注意后面的 * 字符，文件夹全量复制
+        dest: `${cesiumLibraryCopyToRootPath}${dirName}`,
+      };
+    });
+    plugins.push(
+      viteStaticCopy({
+        targets: [
+          // 主库文件，开发时选用非压缩版的 IIFE 格式主库文件
+          {
+            src: `${cesiumLibraryRoot}Cesium.js`,
+            dest: cesiumLibraryCopyToRootPath,
+          },
+          // 四大静态文件夹
+          ...cesiumStaticSourceCopyOptions,
+        ],
+      })
+    );
+  }
+  plugins.push(
+    compress({
+      threshold: 10 * 1024, // 10KB 以下不压缩
+    })
+  );
 
-  return defineConfig({
-    root: "./",
-    build: {
-      assetsDir: "./",
-      minify: ["false"].includes(env.VITE_IS_MINIFY) ? false : true,
-    },
-    plugins: plugins,
+  return {
+    base,
+    envDir,
+    mode,
+    plugins,
     resolve: {
       alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url)),
+        "@": sourceDir,
       },
     },
-  });
-};
+  };
+});

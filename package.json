@@ -1,29 +1,26 @@
 {
-  "name": "vue3-ts-cesium-starter",
-  "version": "0.1.1",
+  "name": "v3ts-cesium-2023",
+  "private": true,
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "postinstall": "node static-copy.js",
-    "static-copy": "node static-copy.js",
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "pinia": "^2.1.7",
     "vue": "^3.4.21"
   },
   "devDependencies": {
     "@types/node": "^20.11.25",
-    "@vitejs/plugin-vue": "^5.0.4",
-    "@vue/compiler-sfc": "^3.4.21",
+    "@vitejs/plugin-vue": "^4.1.0",
     "cesium": "^1.115.0",
-    "del": "^7.1.0",
-    "recursive-copy": "^2.0.14",
     "typescript": "^5.4.2",
     "vite": "^5.1.5",
+    "vite-plugin-compression": "^0.5.1",
     "vite-plugin-externals": "^0.6.2",
-    "vite-plugin-html-config": "^1.0.11",
-    "vue-tsc": "^0.40.13"
+    "vite-plugin-insert-html": "^1.0.2",
+    "vite-plugin-static-copy": "^1.0.1",
+    "vue-tsc": "^2.0.6"
   }
 }
