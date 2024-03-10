@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import BasePage from "./pages/BasePage.vue";
+import Home from "@/pages/index.vue";
 </script>
 
 <template>
-  <BasePage />
+  <Home />
 </template>

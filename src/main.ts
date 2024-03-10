@@ -13,6 +13,7 @@ const cesiumBaseUrl =
   mode === "development"
     ? `${sysBaseUrl}${sourceCesiumBaseUrl}`
     : sourceCesiumBaseUrl;
+
 window.CESIUM_BASE_URL = cesiumBaseUrl;
 
 console.log(`模式: ${mode}, CESIUM_BASE_URL: ${cesiumBaseUrl}`);

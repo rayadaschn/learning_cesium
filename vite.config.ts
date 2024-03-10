@@ -53,6 +53,7 @@ export default defineConfig(({ mode }) => {
       };
     });
     plugins.push(
+      /** viteStaticCopy: https://github.com/sapphi-red/vite-plugin-static-copy */
       viteStaticCopy({
         targets: [
           // 主库文件，开发时选用非压缩版的 IIFE 格式主库文件
@@ -80,6 +81,27 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": sourceDir,
+      },
+    },
+    server: {
+      host: true,
+      port: Number(env.VITE_APP_PORT),
+      proxy: {
+        "/openstreetmap": {
+          target: "https://a.tile.openstreetmap.org/",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/openstreetmap/, ""),
+          bypass(req, res, options) {
+            if (options.rewrite && req.url) {
+              const proxyUrl = new URL(
+                options.rewrite(req.url),
+                options.target as string
+              ).href;
+              res.setHeader("x-req-proxyUrl", proxyUrl);
+              console.info(proxyUrl); // 服务器打印访问代理地址
+            }
+          },
+        },
       },
     },
   };

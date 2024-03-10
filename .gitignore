@@ -33,3 +33,6 @@ dist-ssr
 components.d.ts
 auto-import.d.ts
 .eslintrc-auto-import.json
+
+# token
+src/const/*
