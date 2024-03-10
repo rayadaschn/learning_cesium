@@ -10,12 +10,6 @@ import {
   CesiumTerrainProvider,
   Cartesian3,
   Math as CesiumMath,
-  createOsmBuildingsAsync,
-  Color,
-  LabelStyle,
-  Cartesian2,
-  HorizontalOrigin,
-  VerticalOrigin,
 } from "cesium";
 import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
 
@@ -81,7 +75,7 @@ onMounted(async () => {
   layer.alpha = 0.5;
 
   // 利用 setview 瞬间到达指定位置，视角: 此处为天安门
-  const position = Cartesian3.fromDegrees(116.39, 39.9, 400);
+  const position = Cartesian3.fromDegrees(116.393428, 39.90923, 200);
   viewer.camera.setView({
     // 指定相机位置
     destination: position,
@@ -136,31 +130,6 @@ onMounted(async () => {
         // 其他按键
         break;
     }
-  });
-
-  // 添加3D建筑, 注意这里也是异步渲染
-  const osmBuildings = viewer.scene.primitives.add(
-    await createOsmBuildingsAsync() // 自带渲染
-  );
-
-  // 添加文字和广告牌
-  const label = viewer.entities.add({
-    position: Cartesian3.fromDegrees(116.3904, 39.906, 20),
-    label: {
-      text: " 天安门",
-      font: "24px sans-serif",
-      fillColor: Color.WHITE,
-      outlineColor: Color.BLACK,
-      outlineWidth: 4,
-      // FILL填充文字，OUTLINE勾勒标签，FILL_AND_OUTLINE填充文字和勾勒标签
-      style: LabelStyle.FILL_AND_OUTLINE,
-      // 设置文字的偏移量
-      pixelOffset: new Cartesian2(0, -24),
-      // 设置文字的显示位置,LEFT /RIGHT /CENTER
-      horizontalOrigin: HorizontalOrigin.CENTER,
-      // 设置文字的显示位置
-      verticalOrigin: VerticalOrigin.BOTTOM,
-    },
   });
 });
 </script>
