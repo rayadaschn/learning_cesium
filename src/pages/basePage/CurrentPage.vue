@@ -16,6 +16,7 @@ import {
   Cartesian2,
   HorizontalOrigin,
   VerticalOrigin,
+  DistanceDisplayCondition,
 } from "cesium";
 import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
 
@@ -81,7 +82,7 @@ onMounted(async () => {
   layer.alpha = 0.5;
 
   // 利用 setview 瞬间到达指定位置，视角: 此处为天安门
-  const position = Cartesian3.fromDegrees(116.39, 39.9, 400);
+  const position = Cartesian3.fromDegrees(116.39, 39.85, 2000);
   viewer.camera.setView({
     // 指定相机位置
     destination: position,
@@ -160,6 +161,23 @@ onMounted(async () => {
       horizontalOrigin: HorizontalOrigin.CENTER,
       // 设置文字的显示位置
       verticalOrigin: VerticalOrigin.BOTTOM,
+    },
+  });
+
+  // 添加3D模型
+  const airplane = viewer.entities.add({
+    name: "Airplane",
+    position: Cartesian3.fromDegrees(116.3904, 39.906, 1500),
+    model: {
+      uri: "./model/Air.glb", // 静态文件加载
+      // 设置飞机的最小像素
+      minimumPixelSize: 128,
+      // 设置飞机的轮廓
+      silhouetteSize: 1,
+      // 设置轮廓的颜色
+      silhouetteColor: Color.WHITE,
+      // 设置相机距离模型多远的距离显示
+      distanceDisplayCondition: new DistanceDisplayCondition(0, 200000),
     },
   });
 });
