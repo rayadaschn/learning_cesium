@@ -10,12 +10,12 @@ import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
 
 const viewerDivRef = ref<HTMLDivElement>();
 
-/** 默认视角 */
+/** 默认矩形视角四轴的位置 */
 Camera.DEFAULT_VIEW_RECTANGLE = Rectangle.fromDegrees(
-  75.0, // 东
-  0.0, // 南
-  140.0, // 西
-  60.0 // 北
+  89.5, // 西经
+  20.4, // 南纬
+  110.4, // 东经
+  61.2 // 北纬
 );
 
 onMounted(() => {

@@ -17,12 +17,12 @@ const viewerDivRef = ref<HTMLDivElement>();
 /** cesium Token */
 Ion.defaultAccessToken = CESIUM_TOKEN;
 
-/** 默认视角 */
+/** 默认矩形视角四轴的位置 */
 Camera.DEFAULT_VIEW_RECTANGLE = Rectangle.fromDegrees(
-  89.5, // 东
-  20.4, // 南
-  110.4, // 西
-  61.2 // 北
+  89.5, // 西经
+  20.4, // 南纬
+  110.4, // 东经
+  61.2 // 北纬
 );
 
 /** 天地图矢量路径图 */

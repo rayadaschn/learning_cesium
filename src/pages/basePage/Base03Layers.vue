@@ -2,14 +2,11 @@
 import { onMounted, ref } from "vue";
 import {
   WebMapTileServiceImageryProvider,
+  OpenStreetMapImageryProvider,
   Ion,
   Camera,
   Viewer,
   Rectangle,
-  createWorldTerrainAsync,
-  CesiumTerrainProvider,
-  Cartesian3,
-  Math as CesiumMath,
 } from "cesium";
 import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
 
@@ -46,7 +43,7 @@ const imageryProvider = new WebMapTileServiceImageryProvider({
   tileMatrixSetID: "GoogleMapsCompatible",
 });
 
-onMounted(async () => {
+onMounted(() => {
   const viewer = new Viewer(viewerDivRef.value as HTMLElement, {
     animation: false,
     timeline: false,
@@ -56,11 +53,6 @@ onMounted(async () => {
     sceneModePicker: false, // 控制查看起的显示模式
     baseLayerPicker: false, // 是否显示图层选择器
     navigationHelpButton: false, // 关闭帮助按钮
-    // 设置地形
-    // terrainProvider: await createWorldTerrainAsync({
-    //   requestVertexNormals: true,
-    //   requestWaterMask: true,
-    // }),
   });
 
   // 隐藏 logo
@@ -73,32 +65,6 @@ onMounted(async () => {
   // 叠加图层
   const layer = viewer.imageryLayers.addImageryProvider(imageryProvider);
   layer.alpha = 0.5;
-
-  // 利用 setview 瞬间到达指定位置，视角: 此处为天安门
-  const position = Cartesian3.fromDegrees(116.393428, 39.90923, 200);
-  viewer.camera.setView({
-    // 指定相机位置
-    destination: position,
-    // 指定相机视角
-    orientation: {
-      // 指定相机的朝向,偏航角
-      heading: CesiumMath.toRadians(0),
-      // 指定相机的俯仰角,0度是竖直向上,-90度是向下
-      pitch: CesiumMath.toRadians(-20),
-      // 指定相机的滚转角,翻滚角
-      roll: 0,
-    },
-  });
-
-  // flyto: 让相机飞往某个地方
-  // viewer.camera.flyTo({
-  //   destination: position,
-  //   orientation: {
-  //     heading: CesiumMath.toRadians(0),
-  //     pitch: CesiumMath.toRadians(-20),
-  //     roll: 0,
-  //   },
-  // });
 });
 </script>
 
