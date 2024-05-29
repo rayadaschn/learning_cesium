@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => {
   const isProd = mode === "production";
 
   const cesiumBaseUrl = env["VITE_CESIUM_BASE_URL"];
-  // 默认 base 是 '/'
-  const base = "/";
+
+  const base = "/"; // 默认路径
 
   const plugins: PluginOption[] = [
     vue(),

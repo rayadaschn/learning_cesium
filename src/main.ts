@@ -16,6 +16,6 @@ const cesiumBaseUrl =
 
 window.CESIUM_BASE_URL = cesiumBaseUrl;
 
-console.log(`模式: ${mode}, CESIUM_BASE_URL: ${cesiumBaseUrl}`);
+console.log(`🚀 ~ 模式: ${mode}, CESIUM_BASE_URL: ${cesiumBaseUrl}`);
 
 createApp(App).mount("#app");
