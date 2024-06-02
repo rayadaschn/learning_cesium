@@ -18,6 +18,7 @@ import {
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
   defined,
+  Cartesian2,
 } from "cesium";
 import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
 
@@ -129,7 +130,7 @@ onMounted(async () => {
 
   /** 拾取点击位置 */
   const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
-  handler.setInputAction((movement) => {
+  handler.setInputAction((movement: { position: Cartesian2 }) => {
     console.log("movement", movement);
     const pickedObj = viewer.scene.pick(movement.position);
     if (defined(pickedObj) && typeof pickedObj.id === "string") {

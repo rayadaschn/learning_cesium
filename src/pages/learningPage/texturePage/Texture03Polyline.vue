@@ -8,17 +8,18 @@ import {
   Color,
   Rectangle,
   createWorldTerrainAsync,
-  Cartesian3,
-  GridMaterialProperty,
-  Cartesian2,
-  Material,
-  EllipsoidSurfaceAppearance,
-  Primitive,
-  GeometryInstance,
+  Math as CesiumMath,
+  createOsmBuildingsAsync,
   RectangleGeometry,
+  PerInstanceColorAppearance,
+  GeometryInstance,
   ColorGeometryInstanceAttribute,
-  GeoJsonDataSource,
-  ColorMaterialProperty,
+  Primitive,
+  ScreenSpaceEventHandler,
+  ScreenSpaceEventType,
+  defined,
+  PolylineGlowMaterialProperty,
+  Cartesian3,
 } from "cesium";
 import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
 
@@ -54,31 +55,19 @@ onMounted(async () => {
   const creditContainer = viewer.cesiumWidget.creditContainer as HTMLElement;
   creditContainer.style.display = "none";
 
-  // 加载geojson数据
-  const dataGeo = GeoJsonDataSource.load(
-    "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json",
-    {
-      stroke: Color.RED,
-      fill: Color.SKYBLUE.withAlpha(0.5),
-      strokeWidth: 4,
-    }
-  );
+  // 设置飞线
+  const material = new PolylineGlowMaterialProperty({
+    glowPower: 0.8, // 发光强度
+    taperPower: 0.7, // 尾椎大小
+    color: Color.RED,
+  });
 
-  dataGeo.then((dataSources) => {
-    console.log(dataSources);
-    viewer.dataSources.add(dataSources);
-
-    const entities = dataSources.entities.values;
-    entities.forEach((entity, i) => {
-      entity.polygon!.material = new ColorMaterialProperty(
-        Color.fromRandom({
-          alpha: 1,
-        })
-      );
-      entity.polygon!.outline = false; // 不显示多边形的边界
-      const randomNum = Math.floor(Math.random() * 5);
-      entity.polygon.extrudedHeight = 100000 * randomNum;
-    });
+  const redLine = viewer.entities.add({
+    polyline: {
+      positions: Cartesian3.fromDegreesArray([89.5, 20.4, 110.4, 61.2]),
+      width: 20,
+      material,
+    },
   });
 });
 </script>
