@@ -81,7 +81,6 @@ onMounted(async () => {
   viewer.clock.startTime = startJulianDate.clone();
   viewer.clock.stopTime = stopJulianDate.clone();
   viewer.clock.currentTime = startJulianDate.clone();
-  // console.log(planeData);
   viewer.timeline.zoomTo(startJulianDate, stopJulianDate);
 
   planeData.forEach((dataPoint, i) => {

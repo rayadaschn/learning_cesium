@@ -75,7 +75,7 @@ onMounted(async () => {
 
   const promiseData = CzmlDataSource.load(czml);
   promiseData.then((dataSource) => {
-    console.log(dataSource);
+    console.log("🚀 ~ promiseData.then ~ dataSource:", dataSource);
     viewer.dataSources.add(dataSource);
     viewer.flyTo(dataSource);
   });

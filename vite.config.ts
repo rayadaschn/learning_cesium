@@ -98,7 +98,7 @@ export default defineConfig(({ mode }) => {
                 options.target as string
               ).href;
               res.setHeader("x-req-proxyUrl", proxyUrl);
-              console.info(proxyUrl); // 服务器打印访问代理地址
+              console.log("🚀 ~ bypass ~ proxyUrl:", proxyUrl); // 服务器打印访问代理地址
             }
           },
         },

@@ -131,7 +131,7 @@ onMounted(async () => {
   /** 拾取点击位置 */
   const handler = new ScreenSpaceEventHandler(viewer.scene.canvas);
   handler.setInputAction((movement: { position: Cartesian2 }) => {
-    console.log("movement", movement);
+    console.log("🚀 ~ handler.setInputAction ~ movement:", movement);
     const pickedObj = viewer.scene.pick(movement.position);
     if (defined(pickedObj) && typeof pickedObj.id === "string") {
       viewer.scene.render();
