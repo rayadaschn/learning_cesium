@@ -1,24 +1,20 @@
 <script setup>
-import RainEffect from '@/utils/cesiumCtrl/rain.js'
+import { useRainEffect } from '@/hooks'
 import { useCesiumStore } from '@/store/modules/cesium'
-import { onUnmounted } from 'vue'
 
 const CesiumStore = useCesiumStore()
-const instance = new RainEffect(CesiumStore.viewer, {
-  tiltAngle: -0.2, //倾斜角度
-  rainSize: 1.0, // 雨大小
-  rainSpeed: 120.0, // 雨速
+const { show } = useRainEffect(CesiumStore.viewer, {
+  tiltAngle: -0.5,
+  rainSize: 0.4,
+  rainSpeed: 50,
 })
 
 const hide = () => {
-  instance.show(false)
+  show(false)
 }
 const start = () => {
-  instance.show(true)
+  show(true)
 }
-onUnmounted(() => {
-  instance.destroy()
-})
 </script>
 <template>
   <div class="container">

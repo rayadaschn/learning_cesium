@@ -1,10 +1,9 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { staticRoutes } from '@/router/constantRoutes.ts'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 const isCollapse = ref(false)
 const activePath = ref()
 
