@@ -21,9 +21,9 @@ import { RouteRecordRaw } from 'vue-router'
 export const staticRoutes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
+    name: '气象',
     meta: {
-      title: '首页',
+      title: '气象',
       icon: 'Notification',
     },
     component: () => import('@/pages/layout/index.vue'),
@@ -35,6 +35,15 @@ export const staticRoutes: RouteRecordRaw[] = [
         meta: {
           title: '下雨',
           activePath: '/particle/rain',
+        },
+      },
+      {
+        path: '/fog',
+        name: 'particle_fog',
+        component: () => import('@/pages/particle/fog.vue'),
+        meta: {
+          title: '大雾',
+          activePath: '/particle/fog',
         },
       },
     ],
