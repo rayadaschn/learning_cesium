@@ -46,6 +46,15 @@ export const staticRoutes: RouteRecordRaw[] = [
           activePath: '/particle/fog',
         },
       },
+      {
+        path: '/snow',
+        name: 'particle_snow',
+        component: () => import('@/pages/particle/snow.vue'),
+        meta: {
+          title: '下雪',
+          activePath: '/particle/snow',
+        },
+      },
     ],
   },
 
