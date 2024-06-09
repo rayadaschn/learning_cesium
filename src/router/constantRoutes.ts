@@ -78,6 +78,28 @@ export const staticRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  // 加载数据
+  {
+    path: '/load',
+    name: '加载',
+    meta: {
+      title: '加载',
+      icon: 'UploadFilled',
+    },
+    component: () => import('@/pages/layout/index.vue'),
+    redirect: '/load/model',
+    children: [
+      {
+        path: '/load/model',
+        name: 'load_model',
+        component: () => import('@/pages/load/model.vue'),
+        meta: {
+          title: '模型',
+          activePath: '/load/model',
+        },
+      },
+    ],
+  },
 
   // 此路由防止控制台出现No match found for location with path的警告
   {
