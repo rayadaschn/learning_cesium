@@ -5,9 +5,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const isCollapse = ref(false)
-const activePath = ref()
 
 const subMenu = staticRoutes.filter((item) => item.meta.title !== '404')
+
+const activePath = ref(subMenu[0].redirect) // 默认初始化第一个菜单
 
 const onExpand = () => {
   isCollapse.value = !isCollapse.value

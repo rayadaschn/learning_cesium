@@ -8,9 +8,6 @@
  * @param meta.icon ==> 菜单图标
  * @param meta.title ==> 菜单标题
  * @param meta.activeMenu ==> 当前路由为详情页时，需要高亮的菜单
- * @param meta.isLink ==> 是否外链
- * @param meta.isHide ==> 是否隐藏
- * @param meta.isKeepAlive ==> 是否缓存
  * */
 
 import { RouteRecordRaw } from 'vue-router'
@@ -19,17 +16,41 @@ import { RouteRecordRaw } from 'vue-router'
  * @description 静态路由
  */
 export const staticRoutes: RouteRecordRaw[] = [
+  // 视角切换
   {
     path: '/',
+    name: '相机',
+    meta: {
+      title: '相机',
+      icon: 'Camera',
+    },
+    component: () => import('@/pages/layout/index.vue'),
+    redirect: '/camera',
+    children: [
+      {
+        path: '/camera',
+        name: 'camera_flyTo',
+        component: () => import('@/pages/camera/flyTo.vue'),
+        meta: {
+          title: '飞行',
+          activePath: '/camera',
+        },
+      },
+    ],
+  },
+  // 气象变换
+  {
+    path: '/particle',
     name: '气象',
     meta: {
       title: '气象',
       icon: 'Notification',
     },
     component: () => import('@/pages/layout/index.vue'),
+    redirect: '/particle/rain',
     children: [
       {
-        path: '/rain',
+        path: '/particle/rain',
         name: 'particle_rain',
         component: () => import('@/pages/particle/rain.vue'),
         meta: {
@@ -38,7 +59,7 @@ export const staticRoutes: RouteRecordRaw[] = [
         },
       },
       {
-        path: '/fog',
+        path: '/particle/fog',
         name: 'particle_fog',
         component: () => import('@/pages/particle/fog.vue'),
         meta: {
@@ -47,7 +68,7 @@ export const staticRoutes: RouteRecordRaw[] = [
         },
       },
       {
-        path: '/snow',
+        path: '/particle/snow',
         name: 'particle_snow',
         component: () => import('@/pages/particle/snow.vue'),
         meta: {
@@ -62,7 +83,6 @@ export const staticRoutes: RouteRecordRaw[] = [
   {
     path: '/:catchAll(.*)',
     meta: {
-      isHide: true,
       title: '404',
     },
     component: () => import('@/pages/error/error-404.vue'),
