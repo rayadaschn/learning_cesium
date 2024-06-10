@@ -91,11 +91,33 @@ export const staticRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: '/load/layers',
-        name: 'load_model',
+        name: 'load_image',
         component: () => import('@/pages/load/layers.vue'),
         meta: {
-          title: '图层',
+          title: 'image图层',
           activePath: '/load/layers',
+        },
+      },
+    ],
+  },
+  // 特效
+  {
+    path: '/material',
+    name: '材质',
+    meta: {
+      title: '材质',
+      icon: 'Box',
+    },
+    component: () => import('@/pages/layout/index.vue'),
+    redirect: '/material/radiant',
+    children: [
+      {
+        path: 'radiant',
+        name: 'material_radiant',
+        component: () => import('@/pages/material/radiant.vue'),
+        meta: {
+          title: '辐射圈',
+          activePath: '/material/radiant',
         },
       },
     ],

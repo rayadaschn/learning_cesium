@@ -33,6 +33,9 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
+    "types/declaration-files/auto-import.d.ts",
+    "types/declaration-files/components.d.ts",
+    "types/vite-env.d.ts"
   ],
   "exclude": [
     "node_modules",

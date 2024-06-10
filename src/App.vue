@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Ion, Viewer } from 'cesium'
+import { Ion, Viewer, JulianDate } from 'cesium'
 import { useCesiumStore } from '@/store/modules/cesium'
 import { CESIUM_TOKEN } from '@/const'
 import { useKeydown } from './hooks'
@@ -11,6 +11,14 @@ const viewerDivRef = ref<HTMLDivElement>()
 
 /** cesium Token */
 Ion.defaultAccessToken = CESIUM_TOKEN
+
+const now = new Date() // 获取当前时间的 UTC 日期对象
+
+// 将当前时间转换为北京时间
+const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000)
+
+// 将北京时间转换为 JulianDate
+const julianDate = JulianDate.fromDate(beijingTime)
 
 onMounted(() => {
   const viewer = new Viewer(viewerDivRef.value as HTMLElement, {
@@ -27,6 +35,10 @@ onMounted(() => {
   // 隐藏 logo
   const creditContainer = viewer.cesiumWidget.creditContainer as HTMLElement
   creditContainer.style.display = 'none'
+
+  // 设置 Cesium 时钟为当前北京时间
+  viewer.clock.currentTime = julianDate
+  viewer.clock.shouldAnimate = true
 
   // 显示帧率
   viewer.scene.debugShowFramesPerSecond = true

@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
       cesium(),
       autoImport({
         imports: ['vue', 'vue-router', 'pinia'],
-        dts: 'src/types/declaration-files/auto-import.d.ts',
+        dts: './types/declaration-files/auto-import.d.ts',
         eslintrc: {
           enabled: true,
           filepath: './.eslintrc-auto-import.json',
