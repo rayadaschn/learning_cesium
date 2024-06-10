@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { Ion, Viewer } from 'cesium'
 import { useCesiumStore } from '@/store/modules/cesium'
 import { CESIUM_TOKEN } from '@/const'
+import { useKeydown } from './hooks'
 
 const CesiumStore = useCesiumStore()
 
@@ -31,8 +32,17 @@ onMounted(() => {
   viewer.scene.debugShowFramesPerSecond = true
   viewer.scene.globe.depthTestAgainstTerrain = true
 
+  // 键盘控制
+  useKeydown(viewer)
+
   CesiumStore.setCesium(viewer) // 全局注册视图
   console.log('🚀 ~ onMounted ~ viewer:', viewer)
+
+  // 全局挂载调试
+  const isDevelopment = import.meta.env.MODE === 'development'
+  if (isDevelopment) {
+    window.viewer = viewer
+  }
 })
 </script>
 
