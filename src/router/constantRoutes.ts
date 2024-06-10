@@ -87,15 +87,15 @@ export const staticRoutes: RouteRecordRaw[] = [
       icon: 'UploadFilled',
     },
     component: () => import('@/pages/layout/index.vue'),
-    redirect: '/load/model',
+    redirect: '/load/layers',
     children: [
       {
-        path: '/load/model',
+        path: '/load/layers',
         name: 'load_model',
-        component: () => import('@/pages/load/model.vue'),
+        component: () => import('@/pages/load/layers.vue'),
         meta: {
-          title: '模型',
-          activePath: '/load/model',
+          title: '图层',
+          activePath: '/load/layers',
         },
       },
     ],

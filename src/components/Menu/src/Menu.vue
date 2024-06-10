@@ -1,14 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { staticRoutes } from '@/router/constantRoutes.ts'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 const isCollapse = ref(false)
 
 const subMenu = staticRoutes.filter((item) => item.meta.title !== '404')
 
-const activePath = ref(subMenu[0].redirect) // 默认初始化第一个菜单
+const activePath = ref() // 默认初始化第一个菜单
+
+watch(
+  () => route.path,
+  (newPath) => {
+    activePath.value = newPath
+  },
+)
 
 const onExpand = () => {
   isCollapse.value = !isCollapse.value
