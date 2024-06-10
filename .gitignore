@@ -35,4 +35,4 @@ auto-import.d.ts
 .eslintrc-auto-import.json
 
 # token
-src/const/*
+# src/const/*
