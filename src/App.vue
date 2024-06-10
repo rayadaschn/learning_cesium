@@ -3,7 +3,6 @@ import { onMounted, ref } from 'vue'
 import { Ion, Viewer } from 'cesium'
 import { useCesiumStore } from '@/store/modules/cesium'
 import { CESIUM_TOKEN } from '@/const'
-import 'cesium/Build/CesiumUnminified/Widgets/widgets.css'
 
 const CesiumStore = useCesiumStore()
 
