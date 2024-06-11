@@ -120,6 +120,24 @@ export const staticRoutes: RouteRecordRaw[] = [
           activePath: '/material/radiant',
         },
       },
+      {
+        path: 'highlightRoad',
+        name: 'material_highlightRoad',
+        component: () => import('@/pages/material/highlightRoad.vue'),
+        meta: {
+          title: '道路闪烁',
+          activePath: '/material/highlightRoad',
+        },
+      },
+      {
+        path: 'throughRoad',
+        name: 'material_throughRoad',
+        component: () => import('@/pages/material/throughRoad.vue'),
+        meta: {
+          title: '道路穿梭',
+          activePath: '/material/throughRoad',
+        },
+      },
     ],
   },
 
