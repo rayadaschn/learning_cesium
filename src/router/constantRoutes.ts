@@ -129,13 +129,26 @@ export const staticRoutes: RouteRecordRaw[] = [
           activePath: '/material/highlightRoad',
         },
       },
+    ],
+  },
+  // 测量
+  {
+    path: '/measure',
+    name: '测量',
+    meta: {
+      title: '测量',
+      icon: 'Scan',
+    },
+    component: () => import('@/pages/layout/index.vue'),
+    redirect: '/measure/distance',
+    children: [
       {
-        path: 'throughRoad',
-        name: 'material_throughRoad',
-        component: () => import('@/pages/material/throughRoad.vue'),
+        path: 'distance',
+        name: 'measure_distance',
+        component: () => import('@/pages/measure/distance.vue'),
         meta: {
-          title: '道路穿梭',
-          activePath: '/material/throughRoad',
+          title: '测量距离',
+          activePath: '/measure/distance',
         },
       },
     ],
