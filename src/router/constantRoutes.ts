@@ -137,7 +137,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     name: '测量',
     meta: {
       title: '测量',
-      icon: 'Scan',
+      icon: 'Location',
     },
     component: () => import('@/pages/layout/index.vue'),
     redirect: '/measure/distance',

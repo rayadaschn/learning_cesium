@@ -10,16 +10,38 @@ viewer.camera.setView({
   destination: Cartesian3.fromDegrees(120.153576, 30.287459, 3000),
 })
 
-const { drawLineMeasureGraphics } = useMeasureTool(viewer)
+const { drawLineMeasureGraphics, drawAreaMeasureGraphics } =
+  useMeasureTool(viewer)
 
+const isLineDrawing = ref(false)
 const onLineMeasure = () => {
-  drawLineMeasureGraphics()
+  isLineDrawing.value = true
+  const callback = (positions, polyObj) => {
+    console.log('绘制完成', positions, polyObj)
+    isLineDrawing.value = false
+  }
+  drawLineMeasureGraphics({ callback })
+}
+
+const isAreaDrawing = ref(false)
+const onAreaMeasure = () => {
+  isAreaDrawing.value = true
+  const callback = (positions, polyObj) => {
+    console.log('绘制完成', positions, polyObj)
+    isAreaDrawing.value = false
+  }
+  drawAreaMeasureGraphics({ callback })
 }
 </script>
 
 <template>
   <div class="container">
-    <el-button type="primary" @click="onLineMeasure">空间距离</el-button>
+    <el-button type="primary" @click="onLineMeasure">
+      {{ isLineDrawing ? '开始绘制' : '距离测量' }}
+    </el-button>
+    <el-button type="primary" @click="onAreaMeasure">
+      {{ isAreaDrawing ? '开始绘制' : '空间面积' }}
+    </el-button>
   </div>
 </template>
 

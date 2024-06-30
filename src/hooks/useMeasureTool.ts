@@ -64,13 +64,16 @@ export function useMeasureTool(viewer: Cesium.Viewer) {
   }
 
   /** 拾取屏幕坐标系 转三维  */
-  const getCartesian3FromPX = (px: Cesium.Cartesian2): Cesium.Cartesian3 => {
+  const getCartesian3FromPX = (
+    px: Cesium.Cartesian2,
+    height: number = 1,
+  ): Cesium.Cartesian3 => {
     const cartesian = viewerRef.value.scene.pickPosition(px)
 
     // 将 Cartesian3 转换为 Cartographic
     const cartographic = Cesium.Cartographic.fromCartesian(cartesian)
     // 增加高度偏移量
-    cartographic.height += 20
+    cartographic.height += height // 可根据需要调整高度偏移量
 
     // 将 Cartographic 转换回 Cartesian3
     const adjustedPosition = Cesium.Cartesian3.fromRadians(
@@ -127,21 +130,9 @@ export function useMeasureTool(viewer: Cesium.Viewer) {
       const title =
         Number(distanceKm) > 1 ? `${distanceKm} 公里` : `${distance} 米`
 
-      // 将 Cartesian3 转换为 Cartographic
-      const cartographic = Cesium.Cartographic.fromCartesian(position)
-      // 增加高度偏移量
-      cartographic.height += 0.1 // 解决点比线高的问题
-
-      // 将 Cartographic 转换回 Cartesian3
-      const adjustedPosition = Cesium.Cartesian3.fromRadians(
-        cartographic.longitude,
-        cartographic.latitude,
-        cartographic.height,
-      )
-
       // 创建标签实体
       const labelEntity = new Cesium.Entity({
-        position: adjustedPosition,
+        position,
         point: {
           pixelSize: 8,
           outlineColor: Cesium.Color.BLUE,
@@ -209,8 +200,153 @@ export function useMeasureTool(viewer: Cesium.Viewer) {
     lineObj = drawLayer.value?.entities.add(lineEntity)
   }
 
+  /**
+   * 计算一组坐标组成多边形的面积
+   * @param positions - 由经纬度和高度组成的坐标数组
+   * @returns 多边形的面积（平方米）
+   */
+  const getPositionsArea = (
+    positions: Array<{ longitude: number; latitude: number; altitude: number }>,
+  ): number => {
+    if (!positions || positions.length < 3) {
+      return 0
+    }
+
+    const ellipsoid = Cesium.Ellipsoid.WGS84
+    let area = 0
+
+    // 将经纬度转换为二维平面坐标
+    const coords = positions.map((pos) => {
+      const cartographic = Cesium.Cartographic.fromDegrees(
+        pos.longitude,
+        pos.latitude,
+      )
+      const cartesian = ellipsoid.cartographicToCartesian(cartographic)
+      return { x: cartesian.x, y: cartesian.y }
+    })
+
+    // 使用多边形面积公式计算面积
+    for (let i = 0; i < coords.length; i++) {
+      const j = (i + 1) % coords.length
+      area += coords[i].x * coords[j].y - coords[j].x * coords[i].y
+    }
+
+    return Math.abs(area) / 2
+  }
+
+  /**
+   * 绘制面积测量图形
+   * @param options - 绘制选项，包括回调函数、线宽和材质
+   */
+  const drawAreaMeasureGraphics = (options: any = {}) => {
+    const { callback, width, material } = options
+    const positions: Cesium.Cartesian3[] = []
+    let polyObj: Cesium.Entity | undefined = undefined
+    const handlers = new Cesium.ScreenSpaceEventHandler(
+      viewerRef.value.scene.canvas,
+    )
+
+    /**
+     * 添加坐标点
+     * @param position - 新的坐标点
+     * @param showLabel - 是否显示标签
+     */
+    const addInfoPoint = (
+      position: Cesium.Cartesian3,
+      showLabel: boolean = true,
+    ) => {
+      // 转换 Cartesian 数组到 WGS84 数组
+      const wgs84Positions = transformCartesianArrayToWGS84Array(positions)
+      const area = getPositionsArea(wgs84Positions)
+      const areaKm2 = (area / 1e6).toFixed(3)
+      const title =
+        area > 1e6 ? `${areaKm2} 平方公里` : `${area.toFixed(3)} 平方米`
+
+      // 创建标签实体
+      const labelEntity = new Cesium.Entity({
+        position,
+        point: {
+          pixelSize: 8,
+          outlineColor: Cesium.Color.BLUE,
+          outlineWidth: 8,
+        },
+        label: {
+          text: title,
+          show: showLabel,
+          showBackground: true,
+          backgroundColor: new Cesium.Color(0.0, 0.0, 0.0, 0.5), // 半透明背景
+          font: '14px monospace',
+          horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset: new Cesium.Cartesian2(-20, -20), // left top
+        },
+      })
+
+      // 将实体添加到绘制图层
+      drawLayer.value?.entities.add(labelEntity)
+    }
+
+    // 左键点击事件
+    handlers.setInputAction((movement: any) => {
+      const cartesian = getCartesian3FromPX(movement.position)
+      if (cartesian && cartesian.x) {
+        if (positions.length === 0) {
+          positions.push(cartesian.clone())
+        }
+        addInfoPoint(cartesian, false)
+        positions.push(cartesian)
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+
+    // 鼠标移动事件
+    handlers.setInputAction((movement: any) => {
+      const cartesian = getCartesian3FromPX(movement.endPosition)
+      if (positions.length >= 2) {
+        if (cartesian && cartesian.x) {
+          // 移动时更新最后点
+          positions.pop()
+          positions.push(cartesian)
+        }
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+
+    // 右键点击事件
+    handlers.setInputAction((movement: any) => {
+      handlers.destroy()
+      const cartesian = getCartesian3FromPX(movement.position)
+      addInfoPoint(cartesian) // 首尾闭合
+      positions.push(positions[0])
+      if (typeof callback === 'function') {
+        callback(transformCartesianArrayToWGS84Array(positions), polyObj)
+      }
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+
+    const polygonEntity = new Cesium.Entity({
+      polyline: {
+        width: width ?? 10,
+        material:
+          material ||
+          new Cesium.PolylineArrowMaterialProperty(Cesium.Color.BLUE),
+        positions: new Cesium.CallbackProperty(() => positions, false),
+      },
+      polygon: {
+        hierarchy: new Cesium.CallbackProperty(
+          () => ({
+            positions: positions,
+          }),
+          false,
+        ),
+        material: Cesium.Color.WHITE.withAlpha(0.3),
+        perPositionHeight: true,
+      },
+    })
+
+    polyObj = drawLayer.value?.entities.add(polygonEntity)
+  }
+
   return {
-    drawLineMeasureGraphics,
     transformWGS84ToCartesian,
+    drawLineMeasureGraphics,
+    drawAreaMeasureGraphics,
   }
 }
